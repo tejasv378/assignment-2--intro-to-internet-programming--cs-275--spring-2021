@@ -3,6 +3,8 @@ const htmlValidator = require(`gulp-html`);
 const htmlCompressor = require(`gulp-htmlmin`);
 const cssLinter = require(`gulp-stylelint`);
 const jsLinter = require(`gulp-eslint`);
+const browserSync = require(`browser-sync`);
+const reload = browserSync.reload;
 
 let validateHTML = () => {
     return src([
