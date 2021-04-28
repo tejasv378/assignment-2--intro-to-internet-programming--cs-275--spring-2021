@@ -17,17 +17,5 @@ let compressHTML = () => {
         .pipe(dest(`prod`));
 };
 
-let lintCSS = () => {
-    return src(`src/css/*.css`)
-        .pipe(cssLinter({
-            failAfterError: true,
-            reporters: [
-                {formatter: `verbose`, console: true}
-            ]
-        }));
-};
-
 exports.validateHTML = validateHTML;
 exports.compressHTML = compressHTML;
-exports.lintCSS = lintCSS;
-exports.HTMLProcessing = series(validateHTML, compressHTML);
