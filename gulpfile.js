@@ -1,10 +1,43 @@
 const { src, dest, watch, series } = require(`gulp`);
+const sass = require(`gulp-sass`);
 const htmlValidator = require(`gulp-html`);
 const htmlCompressor = require(`gulp-htmlmin`);
 const cssLinter = require(`gulp-stylelint`);
 const jsLinter = require(`gulp-eslint`);
+const babel = require(`gulp-babel`);
 const browserSync = require(`browser-sync`);
 const reload = browserSync.reload;
+let browserChoice = `default`;
+
+async function safari () {
+    browserChoice = `safari`;
+}
+
+async function firefox () {
+    browserChoice = `firefox`;
+}
+
+async function chrome () {
+    browserChoice = `google chrome`;
+}
+
+async function opera () {
+    browserChoice = `opera`;
+}
+
+async function edge () {
+    browserChoice = `microsoft-edge`;
+}
+
+async function allBrowsers () {
+    browserChoice = [
+        `safari`,
+        `firefox`,
+        `google chrome`,
+        `opera`,
+        `microsoft-edge`
+    ];
+}
 
 let validateHTML = () => {
     return src([
@@ -20,6 +53,24 @@ let compressHTML = () => {
         .pipe(dest(`prod`));
 };
 
+let compileCSSForDev = () => {
+    return src(`css/main.scss`)
+        .pipe(sass({
+            outputStyle: `expanded`,
+            precision: 10
+        }).on(`error`, sass.logError))
+        .pipe(dest(`css/style.css`));
+};
+
+let compileCSSForProd = () => {
+    return src(`css/style.css`)
+        .pipe(sass({
+            outputStyle: `compressed`,
+            precision: 10
+        }).on(`error`, sass.logError))
+        .pipe(dest(`prod/css`));
+};
+
 let lintCSS = () => {
     return src(`css/*.css`)
         .pipe(cssLinter({
@@ -29,6 +80,7 @@ let lintCSS = () => {
             ]
         }));
 };
+
 
 let lintJS = () => {
     return src(`js/*.js`)
@@ -53,6 +105,12 @@ let lintJS = () => {
         }))
         .pipe(jsLinter.formatEach(`compact`, process.stderr));
 };
+
+let transpileJSForDev = () => {
+    return src(`js/*.js`)
+        .pipe(babel())
+        .pipe(dest(`js/app.js`));
+
 
 exports.validateHTML = validateHTML;
 exports.compressHTML = compressHTML;
