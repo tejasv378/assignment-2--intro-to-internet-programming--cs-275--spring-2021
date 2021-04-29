@@ -110,7 +110,7 @@ let transpileJSForDev = () => {
     return src(`js/*.js`)
         .pipe(babel())
         .pipe(dest(`js/app.js`));
-
+};
 
 exports.validateHTML = validateHTML;
 exports.compressHTML = compressHTML;
