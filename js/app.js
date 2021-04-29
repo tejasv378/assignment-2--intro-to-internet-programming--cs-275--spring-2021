@@ -20,6 +20,6 @@ function whiteRecipe() {
     `Combine` + riceCups + `cups of rice with` + whiteWaterCups +
     `cups of water and 1 Tbsp olive oil.` +
     `Bring to a boil, then reduce heat to the lowest setting` +
-    `Cook for about 18 minutes.`;
+    `Cook for about 18 minutes.` +
     document.getElementByID(`SP`).innerHTML = ``;
 }
