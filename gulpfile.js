@@ -4,6 +4,7 @@ const htmlValidator = require(`gulp-html`);
 const htmlCompressor = require(`gulp-htmlmin`);
 const cssLinter = require(`gulp-stylelint`);
 const jsLinter = require(`gulp-eslint`);
+const jsCompressor = require(`gulp-uglify`);
 const babel = require(`gulp-babel`);
 const browserSync = require(`browser-sync`);
 const reload = browserSync.reload;
@@ -53,13 +54,14 @@ let compressHTML = () => {
         .pipe(dest(`prod`));
 };
 
-let compileCSSForDev = () => {
-    return src(`css/main.scss`)
-        .pipe(sass({
-            outputStyle: `expanded`,
-            precision: 10
-        }).on(`error`, sass.logError))
-        .pipe(dest(`css/style.css`));
+let lintCSS = () => {
+    return src(`css/*.css`)
+        .pipe(cssLinter({
+            failAfterError: true,
+            reporters: [
+                {formatter: `verbose`, console: true}
+            ]
+        }));
 };
 
 let compileCSSForProd = () => {
@@ -69,16 +71,6 @@ let compileCSSForProd = () => {
             precision: 10
         }).on(`error`, sass.logError))
         .pipe(dest(`prod/css`));
-};
-
-let lintCSS = () => {
-    return src(`css/*.css`)
-        .pipe(cssLinter({
-            failAfterError: true,
-            reporters: [
-                {formatter: `verbose`, console: true}
-            ]
-        }));
 };
 
 
@@ -106,13 +98,67 @@ let lintJS = () => {
         .pipe(jsLinter.formatEach(`compact`, process.stderr));
 };
 
-let transpileJSForDev = () => {
-    return src(`js/*.js`)
+let transpileJSForProd = () => {
+    return src(`app/js/*.js`)
         .pipe(babel())
-        .pipe(dest(`js/app.js`));
+        .pipe(jsCompressor())
+        .pipe(dest(`prod/js`));
 };
 
+let serve = () => {
+    browserSync({
+        notify: true,
+        port: 9000,
+        reloadDelay: 10,
+        browser: browserChoice,
+        server: {
+            baseDir: [
+                `html`,
+                `css`,
+                `js`
+            ]
+        }
+    });
+
+    watch(`html/**/*.html`,
+        series(validateHTML, compressHTML)
+    ).on(`change`, reload);
+
+    watch(`css/**/*.css`,
+        series(lintCSS)
+    ).on(`change`, reload);
+
+    watch(`app/js/*.js`,
+        series(lintJS)
+    ).on(`change`, reload);
+
+};
+
+exports.dev = series(
+    validateHTML,
+    lintCSS,
+    lintJS,
+    serve
+
+);
+
+exports.build = series(
+    compressHTML,
+    compileCSSForProd,
+    transpileJSForProd
+);
+
+exports.safari = series(safari, serve);
+exports.firefox = series(firefox, serve);
+exports.chrome = series(chrome, serve);
+exports.opera = series(opera, serve);
+exports.edge = series(edge, serve);
+exports.safari = series(safari, serve);
+exports.allBrowsers = series(allBrowsers, serve);
 exports.validateHTML = validateHTML;
 exports.compressHTML = compressHTML;
 exports.lintCSS = lintCSS;
+exports.compileCSSForProd = compileCSSForProd;
 exports.lintJS = lintJS;
+exports.transpileJSForProd = transpileJSForProd;
+exports.serve = series( validateHTML, lintCSS, lintJS, serve);
