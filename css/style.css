@@ -1,4 +1,42 @@
 body {
-  background: aqua;
+  background-color: aqua;
+  color: black;
+  height: 10px;
+}
+
+h1 {
+  background-color: aqua;
+  color: darkmagenta;
+  text-align: center;
+  font-size: 60px;
+  height: 60px;
+  font-weight: 700;
+  font-style: normal;
+}
+
+h2 {
+  background-color: aqua;
+  color: blue;
+  font-size: 40px;
+  height: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+p {
   color: green;
+  background-color: aqua;
+  font-size: 25px;
+  font-family: sans-serif;
+  height: 30px;
+  margin-top: .5px;
+  margin-bottom: 40px;
+}
+
+button {
+  margin-bottom: 3%;
+  margin-top: 6%;
+  padding: 20px;
+  font-size: 20px;
+  border-radius: 20px;
 }
